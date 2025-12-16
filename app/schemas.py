@@ -1,4 +1,4 @@
-from typing import Optional ,List
+from typing import Optional 
 from pydantic import BaseModel
 
 
@@ -14,10 +14,15 @@ class Show_task(Task):
     complete:bool
     pin :bool
 
+
 class User(BaseModel):
     name: str
     email: str
     password: str
 
-class TaskId(BaseModel):
-    id:int
+    
+class User_show(BaseModel):
+    id :int
+    name:str
+    email:str
+

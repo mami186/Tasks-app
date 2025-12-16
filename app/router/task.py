@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter  ,Depends ,HTTPException ,status
 from .. import database ,models ,schemas
 from sqlalchemy.orm import Session
@@ -18,7 +19,7 @@ def task_No(id:int ,db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f" no task found with id {id}")
     return task
 
-@router.get("/",status_code=status.HTTP_200_OK)
+@router.get("/",response_model=List[schemas.Show_task],status_code=status.HTTP_200_OK)
 def get_all(db: Session = Depends(get_db)):
     tasks=db.query(models.Task).all()
     if not tasks :
@@ -31,7 +32,7 @@ def create_task(request:schemas.Task , db: Session = Depends(get_db)):
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
-    return new_task
+    return 
 
 @router.put("/{id}",status_code=status.HTTP_202_ACCEPTED)
 def edit(id:int ,request:schemas.Task , db: Session = Depends(get_db)):
