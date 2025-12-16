@@ -12,10 +12,10 @@ get_db= database.get_db
 
 
 @router.get("/{id}" ,response_model=schemas.Show_task)
-def task_No(request: schemas.TaskId ,db: Session = Depends(get_db)):
-    task= db.query(models.Task).filter(models.Task.id == request.id).first()
+def task_No(id:int ,db: Session = Depends(get_db)):
+    task= db.query(models.Task).filter(models.Task.id == id).first()
     if not task:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f" no task found with id {request.id}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f" no task found with id {id}")
     return task
 
 @router.get("/")
@@ -34,18 +34,19 @@ def create_task(request:schemas.Task , db: Session = Depends(get_db)):
     return new_task
 
 @router.put("/{id}")
-def edit(request:schemas.Task , db: Session = Depends(get_db)):
-    task = db.query(models.Task).filter(models.Task.id ==id).first
-    if not task :
+def edit(id:int ,request:schemas.Task , db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id ==id)
+    if not task.first() :
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+    update_data = request.model_dump(exclude_unset=True)
 
-    task.update(**request.model_dump())
+    task.update(update_data)
     db.commit()
-    db.refresh(task)
-    return task
-    
+    return {"message": "Task updated successfully"}
+
+
 @router.delete("/{id}")
-def delete(request:schemas.Task , db: Session = Depends(get_db)):
+def delete(id:int, db: Session = Depends(get_db)):
     task = db.query(models.Task).filter(models.Task.id ==id).first()
     if not task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")

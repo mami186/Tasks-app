@@ -36,8 +36,8 @@ def get_users(db: Session = Depends(get_db)):
     return users
 
 @router.get("/tasks")
-def get_tasks(db: Session = Depends(get_db)):
-    tasks = db.query(models.Task).filter(models.Task.user_id == 1).all()
+def get_tasks(id:int , db: Session = Depends(get_db)):
+    tasks = db.query(models.Task).filter(models.Task.user_id == id).all()
     if not tasks:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="no tasks found")
     return tasks
