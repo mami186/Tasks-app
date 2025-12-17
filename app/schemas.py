@@ -26,3 +26,7 @@ class User_show(BaseModel):
     name:str
     email:str
 
+class auth(BaseModel):
+    email: str
+    password: str
+

@@ -3,5 +3,7 @@ uvicorn
 pydantic
 sqlalchemy
 python-dotenv
+pwdlib[argon2]     #password hash library
+PyJWT              #json web token
 
 psycopg2-binary       #postgresql driver for Python

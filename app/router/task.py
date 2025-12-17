@@ -54,4 +54,3 @@ def delete(id:int, db: Session = Depends(get_db)):
     db.delete(task)
     db.commit()
     return 
-

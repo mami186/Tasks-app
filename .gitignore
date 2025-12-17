@@ -1,0 +1,74 @@
+# ======================
+# Python
+# ======================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+
+# ======================
+# Virtual Environments
+# ======================
+venv/
+.env/
+.env.*
+.venv/
+virtualenv/
+cloud_storage/
+ENV/
+env/
+
+# ======================
+# FastAPI / Uvicorn
+# ======================
+*.log
+logs/
+uvicorn.log
+gunicorn.log
+
+# ======================
+# Environment & Secrets
+# ======================
+.env
+.env.local
+.env.dev
+.env.prod
+.env.test
+
+# ======================
+# Databases
+# ======================
+*.db
+*.sqlite
+*.sqlite3
+
+# ======================
+# Migrations / Cache
+# ======================
+alembic/versions/__pycache__/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ======================
+# IDE / Editor
+# ======================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ======================
+# OS
+# ======================
+.DS_Store
+Thumbs.db
+
+# ======================
+# Docker
+# ======================
+docker-compose.override.yml
