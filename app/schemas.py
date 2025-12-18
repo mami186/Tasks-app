@@ -30,3 +30,6 @@ class auth(BaseModel):
     email: str
     password: str
 
+
+class TokenData(BaseModel):
+    email: str | None = None

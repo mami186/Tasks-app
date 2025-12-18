@@ -7,3 +7,7 @@ pwdlib[argon2]     #password hash library
 PyJWT              #json web token
 
 psycopg2-binary       #postgresql driver for Python
+
+python-multipart
+python-dotenv
+python-jose[cryptography]

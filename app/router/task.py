@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter  ,Depends ,HTTPException ,status
 from .. import database ,models ,schemas
 from sqlalchemy.orm import Session
-
+from .. import oauth2
 router = APIRouter(
     prefix="/task",
     tags=["Tasks"]
@@ -13,7 +13,7 @@ get_db= database.get_db
 
 
 @router.get("/{id}" ,response_model=schemas.Show_task ,status_code=status.HTTP_200_OK)
-def task_No(id:int ,db: Session = Depends(get_db)):
+def task_No(id:int ,db: Session = Depends(get_db) ,current_user:schemas.TokenData =Depends(oauth2.get_current_user)):
     task= db.query(models.Task).filter(models.Task.id == id).first()
     if not task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f" no task found with id {id}")
