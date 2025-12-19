@@ -6,9 +6,6 @@ class Task(BaseModel):
     name:Optional[str]=None
     body:str
 
-class Tag(BaseModel):
-    tag:str
-
 class Show_task(Task):
     id:int
     user_id:int
@@ -29,7 +26,18 @@ class User_show(BaseModel):
 
 class User_update(BaseModel):
     name:str
+
+class Tags(BaseModel):
+    name:str
+    color:Optional[str] = None
     
+
+class Show_tags(BaseModel):
+    id:int
+    name:str
+    color:str
+
+
 class auth(BaseModel):
     email: str
     password: str
@@ -37,3 +45,4 @@ class auth(BaseModel):
 
 class TokenData(BaseModel):
     id: int
+
