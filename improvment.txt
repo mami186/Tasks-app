@@ -4,9 +4,6 @@ Filter and sort by priority
 
 2 Toggle complete/pin status
 
-1. Tag management API (highest priority)
-Tags are modeled but not exposed via API. Add:
-Create/read/update/delete tags
 
 
 4. Environment configuration

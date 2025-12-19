@@ -36,9 +36,12 @@ class User_update(BaseModel):
 class Tags(BaseModel):
     name:str
     color:Optional[str] = None
-    
 
+class task_pin(BaseModel):
+    pin:bool
 
+class task_status(BaseModel):
+    complete:bool
 
 class auth(BaseModel):
     email: str

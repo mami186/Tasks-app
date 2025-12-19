@@ -54,4 +54,30 @@ def delete(id:int, db: Session = Depends(get_db),current_user:schemas.TokenData 
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
     db.delete(task)
     db.commit()
-    return 
+    return {"detail": "Task deleted successfully"}
+
+
+@router.patch("/{task_id}/pin",status_code=status.HTTP_200_OK)
+def pin_status(task_id:int, request:schemas.task_pin , db: Session = Depends(get_db),current_user:schemas.TokenData =Depends(oauth2.get_current_user)):
+    task = db.query(models.Task).filter(models.Task.id == task_id, models.Task.user_id == current_user.id).first()
+
+    if not task:
+         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+    task.pin = request.pin
+    db.commit()
+    db.refresh(task)
+    return  task
+
+
+@router.patch("/{task_id}/status",status_code=status.HTTP_200_OK)
+def task_status(task_id:int,request:schemas.task_status , db: Session = Depends(get_db),current_user:schemas.TokenData =Depends(oauth2.get_current_user)):
+    task = db.query(models.Task).filter(models.Task.id == task_id, models.Task.user_id == current_user.id).first()
+
+    if not task:
+         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
+
+    task.complete = request.complete
+    db.commit()
+    db.refresh(task)
+    return  task
