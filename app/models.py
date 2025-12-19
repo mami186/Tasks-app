@@ -47,3 +47,4 @@ class Tag(Base):
 
     tasks = relationship("Task", secondary=task_tags, back_populates="tags")
     user = relationship("User", back_populates="tags")
+

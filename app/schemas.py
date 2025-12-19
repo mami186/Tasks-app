@@ -1,4 +1,4 @@
-from typing import Optional 
+from typing import Optional ,List
 from pydantic import BaseModel
 
 
@@ -6,11 +6,17 @@ class Task(BaseModel):
     name:Optional[str]=None
     body:str
 
+class Show_tags(BaseModel):
+    id:int
+    name:str
+    color:str
+
 class Show_task(Task):
     id:int
     user_id:int
     complete:bool
     pin :bool
+    tags:List[Show_tags]
 
 
 class User(BaseModel):
@@ -32,10 +38,6 @@ class Tags(BaseModel):
     color:Optional[str] = None
     
 
-class Show_tags(BaseModel):
-    id:int
-    name:str
-    color:str
 
 
 class auth(BaseModel):
