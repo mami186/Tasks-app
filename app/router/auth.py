@@ -21,7 +21,7 @@ def auth(request:OAuth2PasswordRequestForm=Depends(), db: Session = Depends(data
     if not verify_password(request.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Credential")
 
-    access_token = token.create_access_token(data={"sub": user.email})
+    access_token = token.create_access_token(user.id)
     return {"access_token":access_token, "token_type":"bearer"}
 
 

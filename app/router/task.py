@@ -12,31 +12,32 @@ get_db= database.get_db
 
 
 
+@router.get("/",response_model=List[schemas.Show_task],status_code=status.HTTP_200_OK)
+def get_all(db: Session = Depends(get_db),current_user:schemas.TokenData =Depends(oauth2.get_current_user)):
+    tasks=db.query(models.Task).filter(models.Task.user_id == current_user.id).all()
+    return tasks
+
+
 @router.get("/{id}" ,response_model=schemas.Show_task ,status_code=status.HTTP_200_OK)
 def task_No(id:int ,db: Session = Depends(get_db) ,current_user:schemas.TokenData =Depends(oauth2.get_current_user)):
-    task= db.query(models.Task).filter(models.Task.id == id).first()
+    task= db.query(models.Task).filter(models.Task.id == id , models.Task.user_id == current_user.id).first()
     if not task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND , detail=f" no task found with id {id}")
     return task
 
-@router.get("/",response_model=List[schemas.Show_task],status_code=status.HTTP_200_OK)
-def get_all(db: Session = Depends(get_db)):
-    tasks=db.query(models.Task).all()
-    if not tasks :
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="no tasks found")
-    return tasks
 
 @router.post("/",status_code=status.HTTP_201_CREATED)
-def create_task(request:schemas.Task , db: Session = Depends(get_db)):
-    new_task= models.Task(name=request.name ,body=request.body ,user_id =1)
+def create_task(request:schemas.Task , db: Session = Depends(get_db),current_user:schemas.TokenData =Depends(oauth2.get_current_user)):
+    new_task= models.Task(name=request.name ,body=request.body ,user_id =current_user.id)
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
-    return 
+    return  new_task
+
 
 @router.put("/{id}",status_code=status.HTTP_202_ACCEPTED)
-def edit(id:int ,request:schemas.Task , db: Session = Depends(get_db)):
-    task = db.query(models.Task).filter(models.Task.id ==id)
+def edit(id:int ,request:schemas.Task , db: Session = Depends(get_db),current_user:schemas.TokenData =Depends(oauth2.get_current_user)):
+    task = db.query(models.Task).filter(models.Task.id ==id  ,models.Task.user_id == current_user.id)
     if not task.first() :
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
     update_data = request.model_dump(exclude_unset=True)
@@ -47,8 +48,8 @@ def edit(id:int ,request:schemas.Task , db: Session = Depends(get_db)):
 
 
 @router.delete("/{id}",status_code=status.HTTP_204_NO_CONTENT)
-def delete(id:int, db: Session = Depends(get_db)):
-    task = db.query(models.Task).filter(models.Task.id ==id).first()
+def delete(id:int, db: Session = Depends(get_db),current_user:schemas.TokenData =Depends(oauth2.get_current_user)):
+    task = db.query(models.Task).filter(models.Task.id ==id ,models.Task.user_id == current_user.id).first()
     if not task:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
     db.delete(task)

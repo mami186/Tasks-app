@@ -6,8 +6,8 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-def create_access_token(data: dict):
-    to_encode = data.copy()
+def create_access_token(user_id: int):
+    to_encode = {"id": user_id}  
 
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -15,10 +15,12 @@ def create_access_token(data: dict):
 def verify_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
-        if email is None:
+
+        user_id = payload.get("id")
+
+        if user_id is None:
             raise credentials_exception
-        token_data = schemas.TokenData(email=email)
+        token_data = schemas.TokenData(id=user_id)
         return token_data
     except jwt.InvalidTokenError:
         raise credentials_exception

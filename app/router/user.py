@@ -3,6 +3,8 @@ from .. import database ,models,schemas
 from sqlalchemy.orm import Session
 from typing import List
 from .. import hash
+from .. import oauth2
+
 
 
 router=APIRouter(
@@ -19,17 +21,38 @@ def create_user(request:schemas.User , db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return 
+    return {"id": new_user.id, "email": new_user.email, "name": new_user.name}
 
 
-@router.delete("/{id}",status_code=status.HTTP_204_NO_CONTENT)
-def delete_user(id:int , db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == id).first()
+@router.delete("/me",status_code=status.HTTP_204_NO_CONTENT)
+def delete_user( db: Session = Depends(get_db),current_user: schemas.TokenData = Depends(oauth2.get_current_user)):
+    user = db.query(models.User).filter(models.User.id == current_user.id).first()
+
+    
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not allowed to delete this user"
+        )
     db.delete(user)
     db.commit()
-    return
+    return {"message": "Your account has been deleted successfully"}
+
+@router.put("/me",status_code=status.HTTP_202_ACCEPTED)
+def update_user(request:schemas.User_update,db:Session=Depends(get_db),current_user: schemas.TokenData = Depends(oauth2.get_current_user)):
+    user = db.query(models.User).filter(models.User.id == current_user.id)
+
+    if not user.first():
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not allowed to delete this user"
+        )
+
+    updated = request.model_dump(exclude_unset=True)
+    user.update(updated)
+
+    db.commit()
+    return {"message": "Task updated successfully"}
 
 
 @router.get("/", response_model=List[schemas.User_show] ,status_code=status.HTTP_200_OK)
@@ -39,9 +62,5 @@ def get_users(db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="no users found")
     return users
 
-@router.get("/tasks", response_model=List[schemas.Show_task],status_code=status.HTTP_200_OK)
-def get_tasks(id:int , db: Session = Depends(get_db)):
-    tasks = db.query(models.Task).filter(models.Task.user_id == id).all()
-    if not tasks:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="no tasks found")
-    return tasks
+
+

@@ -10,6 +10,7 @@ class Tag(BaseModel):
     tag:str
 
 class Show_task(Task):
+    id:int
     user_id:int
     complete:bool
     pin :bool
@@ -26,10 +27,13 @@ class User_show(BaseModel):
     name:str
     email:str
 
+class User_update(BaseModel):
+    name:str
+    
 class auth(BaseModel):
     email: str
     password: str
 
 
 class TokenData(BaseModel):
-    email: str | None = None
+    id: int
